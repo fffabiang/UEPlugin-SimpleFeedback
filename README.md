@@ -1,2 +1,3 @@
 # plugin-simplefeedback
-A custom plugin for easy Feedback play on controllers.
+A custom UE plugin for easy Feedback play on controllers.
+Tested on Engine version 5.2
