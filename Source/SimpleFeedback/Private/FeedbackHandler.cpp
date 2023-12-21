@@ -25,31 +25,41 @@ void AFeedbackHandler::SetFeedbackLevels(UForceFeedbackEffect* LowFeedback, UFor
 	FeedbackLevelHigh = HighFeedback;
 }
  
-void AFeedbackHandler::PlayFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController)
+void AFeedbackHandler::PlayFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController, bool bLoop)
 {
 
 	if (!PlayerController)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Error getting player controller"));
+		return;
 	}
+
+	FForceFeedbackParameters FeedbackParam; 
+	FeedbackParam.bLooping = bLoop; 
 
 	switch (level)
 	{
 	case EFeedbackLevel::Low:
 		if (FeedbackLevelLow)
-			PlayCustomFeedback(PlayerController, FeedbackLevelLow);
+		{
+			PlayCustomFeedback(PlayerController, FeedbackLevelLow, FeedbackParam);
+		}
 		else
 			UE_LOG(LogTemp, Error, TEXT("Invalid reference for LOW level feedback effect."));
 		break;
 	case EFeedbackLevel::Mid:
 		if (FeedbackLevelMid)
-			PlayCustomFeedback(PlayerController, FeedbackLevelMid);
+		{
+			PlayCustomFeedback(PlayerController, FeedbackLevelMid, FeedbackParam);
+		}			
 		else
 			UE_LOG(LogTemp, Error, TEXT("Invalid reference for MID level feedback effect."));
 		break;
 	case EFeedbackLevel::High:
 		if (FeedbackLevelHigh)
-			PlayCustomFeedback(PlayerController, FeedbackLevelHigh);
+		{
+			PlayCustomFeedback(PlayerController, FeedbackLevelHigh, FeedbackParam);
+		}			
 		else
 			UE_LOG(LogTemp, Error, TEXT("Invalid reference for HIGH level feedback effect."));
 		break;
@@ -59,16 +69,50 @@ void AFeedbackHandler::PlayFeedbackByLevel(EFeedbackLevel level, APlayerControll
 
 }
 
-void AFeedbackHandler::PlayCustomFeedback(APlayerController* PlayerController, UForceFeedbackEffect* Effect)
+void AFeedbackHandler::StopFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController)
+{
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Error getting player controller"));
+		return;
+	}
+
+	switch (level)
+	{
+	case EFeedbackLevel::Low:
+		if (FeedbackLevelLow)
+		{
+			PlayerController->ClientStopForceFeedback(FeedbackLevelLow, NAME_None);
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Invalid reference for LOW level feedback effect."));
+		break;
+	case EFeedbackLevel::Mid:
+		if (FeedbackLevelMid)
+		{
+			PlayerController->ClientStopForceFeedback(FeedbackLevelMid, NAME_None);
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Invalid reference for MID level feedback effect."));
+		break;
+	case EFeedbackLevel::High:
+		if (FeedbackLevelHigh)
+		{
+			PlayerController->ClientStopForceFeedback(FeedbackLevelHigh, NAME_None);
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Invalid reference for HIGH level feedback effect."));
+		break;
+	default:
+		break;
+	}
+}
+
+void AFeedbackHandler::PlayCustomFeedback(APlayerController* PlayerController, UForceFeedbackEffect* Effect, FForceFeedbackParameters FeedbackParams)
 {
 
 	if (Effect != nullptr)
 	{
-		// Create a FForceFeedbackParameters struct to hold the feedback effect and other settings
-		FForceFeedbackParameters FeedbackParams;
-		FeedbackParams.bLooping = false;
-		FeedbackParams.Tag = "CustomFeedback";
-
 		PlayerController->ClientPlayForceFeedback(Effect, FeedbackParams);
 	}
 	else

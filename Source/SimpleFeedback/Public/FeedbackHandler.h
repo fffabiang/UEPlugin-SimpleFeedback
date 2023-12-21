@@ -30,10 +30,11 @@ public:
 	static void SetFeedbackLevels(UForceFeedbackEffect* LowFeedback, UForceFeedbackEffect* MidFeedback, UForceFeedbackEffect* HighFeedback);
 
 	UFUNCTION(BlueprintCallable, Category = Feedback)
-	static void PlayFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController);
+	static void PlayFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController, bool Loop = false);
 
-	UFUNCTION(BlueprintCallable, Category = Feedback)
-	static void PlayCustomFeedback(APlayerController* PlayerController, UForceFeedbackEffect* Effect);
+	static void StopFeedbackByLevel(EFeedbackLevel level, APlayerController* PlayerController);
+
+	static void PlayCustomFeedback(APlayerController* PlayerController, UForceFeedbackEffect* Effect, FForceFeedbackParameters FeedbackParams = FForceFeedbackParameters());
 
 private:
 	//Low level controller feedback effect
